@@ -3,181 +3,169 @@
 [![npm version](https://img.shields.io/npm/v/slimclaude.svg)](https://www.npmjs.com/package/slimclaude)
 [![CI](https://github.com/Merlijnos/slimclaude/actions/workflows/ci.yml/badge.svg)](https://github.com/Merlijnos/slimclaude/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](./LICENSE)
-[![Node >= 20](https://img.shields.io/badge/node-%3E%3D20-brightgreen.svg)](https://nodejs.org)
 
-**Other tools tell you that you're wasting AI coding-agent tokens. slimclaude fixes it — and proves the savings.**
+Usage trackers tell you what you spent. slimclaude cuts the spend.
 
-Your agents re-send the same persistent context every single session: bloated memory files, missing ignore files, and MCP tool schemas. slimclaude scans your setup, **applies the fixes via reviewable diffs**, and measures the before/after token reduction. Detect → fix → measure. 100% local. No network, no login, no telemetry.
+It finds the context your AI coding agents reload every session — bloated memory
+files, missing ignore files, dead config — fixes it with diffs you approve, and
+shows the tokens saved. Local only. No network, no account.
 
-```bash
+```
 npx slimclaude
 ```
 
----
+## Example
 
-## Works with the agents you actually use
+A repo using Claude Code and Cursor, scanned read-only:
 
-slimclaude **auto-detects** which agents a project (and your home dir) use, and only scans those:
-
-| Agent | Memory files | Ignore file | MCP |
-|---|---|---|---|
-| **Claude Code** | `CLAUDE.md`, `.claude/CLAUDE.md`, `~/.claude/CLAUDE.md` | `.claudeignore` | ✅ |
-| **Codex** | `AGENTS.md`, `~/.codex/AGENTS.md` | — | — |
-| **Cursor** | `.cursorrules`, `.cursor/rules/*.mdc` | `.cursorignore` | ✅ |
-| **Gemini CLI** | `GEMINI.md`, `~/.gemini/GEMINI.md` | `.geminiignore` | ✅ |
-| **Windsurf** | `.windsurfrules`, `.windsurf/rules/*.md` | `.codeiumignore` | — |
-| **GitHub Copilot** | `.github/copilot-instructions.md`, `.github/instructions/*` | — | ✅ |
-
-`AGENTS.md` is the shared standard — Cursor, Codex, Zed and others read it too.
-
----
-
-## What it does
-
-Two commands.
-
-### `slimclaude` — scan (read-only)
-
-```text
-$ npx slimclaude
-
-slimclaude  ·  ~/code/acme-api  ·  grade  D 
+```
+slimclaude  ·  ~/code/acme-api  ·  grade  F 
 Detected agents: Claude Code, Cursor
 
-┌──────────────┬────────┬──────────────────────────────────────────┬────────────────┬─────────┐
-│ Agent        │ Type   │ Finding                                    │ Tokens/session │ $/month │
-├──────────────┼────────┼──────────────────────────────────────────┼────────────────┼─────────┤
-│ Claude Code  │ Memory │ ./CLAUDE.md: 612 redundant tokens          │            612 │   $0.18 │
-│ Claude Code  │ Ignore │ .claudeignore missing — 3 path(s) unignored│          4,180 │   $1.25 │
-│ Cursor       │ Memory │ ./.cursor/rules/ts.mdc: 240 redundant      │            240 │   $0.07 │
-│ Cursor       │ Ignore │ .cursorignore missing — 3 path(s) unignored│          4,180 │   $1.25 │
-└──────────────┴────────┴──────────────────────────────────────────┴────────────────┴─────────┘
+┌─────────────┬─────────────┬───────────────────────────────────────────────────────────┬────────────────┬─────────┐
+│ Agent       │ Type        │ Finding                                                   │ Tokens/session │ $/month │
+├─────────────┼─────────────┼───────────────────────────────────────────────────────────┼────────────────┼─────────┤
+│ Claude Code │ Memory      │ ./CLAUDE.md: 84 redundant tokens                          │             84 │   $0.03 │
+│ Claude Code │ Ignore      │ .claudeignore missing — 3 heavy path(s) unignored         │         10,003 │   $3.00 │
+│ Claude Code │ Definitions │ ~/.claude/agents/reviewer.md.bak — backup/temp artifact   │              5 │   $0.00 │
+│ Claude Code │ Definitions │ ~/.claude/skills/half-built — missing SKILL.md            │              7 │   $0.00 │
+│ Cursor      │ Memory      │ ./.cursorrules: 17 redundant tokens                       │             17 │   $0.01 │
+│ Cursor      │ Ignore      │ .cursorignore missing — 3 heavy path(s) unignored         │         10,003 │   $3.00 │
+└─────────────┴─────────────┴───────────────────────────────────────────────────────────┴────────────────┴─────────┘
 
-Estimated savings if fixed: ~9,212 tokens/session (~$2.76/month) (summed across 2 agents)
-
-Potential savings — needs your review (not counted above)
-slimclaude cannot see invocation history, so it cannot confirm these are unused.
-┌──────────────┬──────┬───────────────────────────────────────┬────────────────────┐
-│ Claude Code  │ MCP  │ github (~/.claude.json)               │                 550 │
-│ Claude Code  │ MCP  │ sentry (~/.claude.json)               │                 550 │
-└──────────────┴──────┴──────────────────────────────────────┴────────────────────┘
-Unconfirmed potential: ~1,100 tokens/session (~$0.33/month) — your judgment, not detected.
+Estimated savings if fixed: ~20,119 tokens/session (~$6.04/month) (summed across 2 agents)
 ```
 
-### `slimclaude fix` — fix + measure
+Then `slimclaude fix` shows a diff per change, asks before writing, backs up every
+file it touches, and reports the result:
 
-Shows a unified diff for every change, asks `[y/N]` per change, backs up every file it touches, then prints the money shot:
-
-```text
-$ npx slimclaude fix
-
-High-confidence fixes
-
-• Claude Code · Memory — ./CLAUDE.md: 612 redundant tokens
-  --- ./CLAUDE.md
-  +++ ./CLAUDE.md
-  @@ -1,8 +1,4 @@
-   # Rules
-  -
-  -
-  -Always validate every external input explicitly.
-   Always validate every external input explicitly.
-  -# Rules
-  Apply this change? [y/N] y
-  applied
+```
+• Claude Code · Memory — ./CLAUDE.md: 84 redundant tokens
+--- ./CLAUDE.md
++++ ./CLAUDE.md
+@@ -8,17 +8,7 @@
+ 
+ 
+-## Code style
+-- Use TypeScript strict mode everywhere.
+-- Prefer composition over inheritance.
+-- Write the minimum code that solves the task.
+-
+ ## Testing
+ - Every new module needs a unit test before it is considered done.
+-- Every new module needs a unit test before it is considered done.
+ 
+ ## Git
+ - Use Conventional Commits with imperative subject lines.
+-- Use Conventional Commits with imperative subject lines.
+Apply this change? [y/N] y
 
 Before vs after
-┌────────────────────────┬────────┬───┬────────┬────────┐
-│                        │ Before │   │ After  │  Saved │
-├────────────────────────┼────────┼───┼────────┼────────┤
-│ Context tokens/session │  9,940 │ → │    728 │  9,212 │
-│ $/month                │ $29.82 │ → │  $2.18 │ $27.64 │
-│ Grade                  │   D    │ → │   A    │        │
-└────────────────────────┴────────┴───┴────────┴────────┘
+┌────────────────────────┬────────┬───┬───────┬────────┐
+│                        │ Before │   │ After │  Saved │
+├────────────────────────┼────────┼───┼───────┼────────┤
+│ Context tokens/session │ 21,346 │ → │ 1,227 │ 20,119 │
+│ $/month                │  $6.40 │ → │ $0.37 │  $6.04 │
+│ Grade                  │     F  │ → │    A  │        │
+└────────────────────────┴────────┴───┴───────┴────────┘
 ```
 
-Numbers above are illustrative. Run it on your own setup to see real ones.
+Same run also created `.claudeignore` and `.cursorignore`, and archived the dead
+definitions. The MCP servers it found were left untouched — see "What it leaves
+alone" below.
 
----
+## Supported agents
 
-## What it detects (and fixes)
+slimclaude detects which agents a repo uses and only scans those.
 
-For every detected agent:
+| Agent          | Memory files                                              | Ignore file       | MCP |
+| -------------- | -------------------------------------------------------- | ----------------- | --- |
+| Claude Code    | `CLAUDE.md`, `.claude/CLAUDE.md`, `~/.claude/CLAUDE.md`   | `.claudeignore`   | yes |
+| Codex          | `AGENTS.md`, `~/.codex/AGENTS.md`                         | —                 | —   |
+| Cursor         | `.cursorrules`, `.cursor/rules/*.mdc`                     | `.cursorignore`   | yes |
+| Gemini CLI     | `GEMINI.md`, `~/.gemini/GEMINI.md`                        | `.geminiignore`   | yes |
+| Windsurf       | `.windsurfrules`, `.windsurf/rules/*.md`                  | `.codeiumignore`  | —   |
+| GitHub Copilot | `.github/copilot-instructions.md`, `.github/instructions`| —                 | yes |
 
-1. **Bloated memory files** — trims *provably* redundant content only: duplicate lines, repeated headers, blank-line runs, trailing whitespace. Conservative, and code fences are never touched.
-2. **Missing / weak ignore files** — generates or augments the agent's ignore file so heavy dirs (`node_modules`, `dist`, `.next`, `vendor`, lockfiles, `*.min.js`, …) don't get pulled into context.
-3. **MCP servers** — every configured server injects tool schemas every session. Listed with estimated cost for **your review** (see below).
-4. **Orphaned Claude definitions** under `~/.claude/` — empty files, backup/temp junk (`*.bak`, `*.orig`, …), and skill folders missing their `SKILL.md` are archived (never deleted). Real definitions are listed for **your review**.
+`AGENTS.md` is read by Codex, Cursor, Zed and others.
 
----
+## What it finds
 
-## How it estimates tokens
+1. Bloated memory files. Removes only provably redundant lines: exact duplicates,
+   repeated headers, blank-line runs, trailing whitespace. Code fences untouched.
+2. Missing or weak ignore files. Generates one so `node_modules`, `dist`, lockfiles
+   and similar never enter context.
+3. MCP servers. Each one's tool schema is reloaded every session. Listed with an
+   estimated cost so you can decide.
+4. Dead definitions under `~/.claude` — empty files, `.bak`/temp leftovers, skill
+   folders with no `SKILL.md`. Archived, never deleted.
 
-Be skeptical — these are **estimates**, not measurements.
+## What it leaves alone
 
-- **chars / 4.** slimclaude approximates tokens as characters divided by 4. It does **not** run a real tokenizer (intentional for v0.1). Real counts vary by content and model.
-- **Heavy directories** are estimated from on-disk bytes, capped per path (a session only ever reads a fraction of `node_modules`).
-- **Cost** = `tokens/session × sessions-per-month × input price`. Defaults: 100 sessions/month, Sonnet pricing ($3 / 1M input). Override with `--sessions-per-month` and `--model opus|sonnet|haiku`.
-- **Summed across agents.** If you use multiple agents, the headline sums each agent's per-session waste — fixing each agent's files saves tokens in that agent's sessions. The output labels this explicitly.
-- **slimclaude cannot see your invocation history.** It does *not* read session logs, so it genuinely cannot know whether an MCP server or a definition was ever used. Those appear in a separate "needs your review" section, are **never** modified by `--yes`, and require an explicit confirmation. Deciding what's unused is your call, not a detection.
+slimclaude does not read your session history, so it cannot know whether an MCP
+server or a skill is actually used. Those go in a separate "needs your review"
+list, never count toward the headline number, and are never changed by `--yes`.
+You decide, with an explicit prompt. Only provably-dead waste is counted and
+auto-fixable.
 
-Only provably-dead items (redundant memory content, uncovered heavy paths, empty/junk definitions) count toward the green headline number and the grade.
+## How the numbers work
 
----
+Estimates, not measurements — stated plainly so you can judge them:
 
-## How it's different from ccusage / CodeBurn
+- Tokens are approximated as characters / 4. No tokenizer is run.
+- Heavy directories are sized from disk bytes, capped per path, since a session
+  reads only part of `node_modules`.
+- Cost is `tokens/session × sessions/month × input price`, default 100 sessions
+  and Sonnet pricing ($3 / 1M). Change with `--sessions-per-month` and `--model`.
+- With multiple agents the headline sums each agent's per-session waste, and says so.
 
-| | ccusage / CodeBurn | **slimclaude** |
-|---|---|---|
-| Reports token usage | ✅ | — (not its job) |
-| Reads session history | ✅ | ❌ (focuses on fixable persistent context) |
-| Multiple agents | Claude-only | ✅ Claude, Codex, Cursor, Gemini, Windsurf, Copilot |
-| **Applies fixes** | ❌ | ✅ via reviewable diffs |
-| **Measures before/after savings** | ❌ | ✅ |
+## vs ccusage / CodeBurn
 
-They tell you that you're spending. slimclaude reduces the spend and shows you the delta.
+|                         | ccusage / CodeBurn | slimclaude        |
+| ----------------------- | ------------------ | ----------------- |
+| Reports usage           | yes                | no                |
+| Reads session history   | yes                | no                |
+| Multiple agents         | Claude only        | six (table above) |
+| Applies fixes           | no                 | yes, via diffs    |
+| Measures before / after | no                 | yes               |
 
----
+They report the bill. slimclaude lowers it.
 
-## Flags
+## Commands and flags
 
-```text
---path <dir>                project directory to scan (default: cwd)
+```
+slimclaude            scan, read-only
+slimclaude fix        show diffs, confirm, apply, report savings
+
+--path <dir>                directory to scan (default: current)
 --sessions-per-month <n>    for the cost estimate (default: 100)
 --model <opus|sonnet|haiku> pricing model (default: sonnet)
---json                      machine-readable output (any command)
+--json                      machine-readable output
 --dry-run                   show diffs, write nothing
---yes                       apply all high-confidence fixes without prompting
+--yes                       apply fixes without prompting
 ```
 
 ## Safety
 
-This tool edits your files. It is built to be conservative:
-
-- **Never deletes.** Archiving moves files to `~/.claude/.slimclaude-archive/`.
-- **Never writes without** a `[y/N]` confirmation or `--yes`.
-- **Backs up** every file before modifying it (`.bak`).
-- `--yes` only touches high-confidence fixes. MCP servers and real definitions are never auto-changed — they always require an explicit, separate confirmation.
-- Use `--dry-run` to preview every diff without writing a byte.
-
----
+- Never deletes. Archiving moves files to `~/.claude/.slimclaude-archive/`.
+- Never writes without a `[y/N]` confirmation or `--yes`.
+- Backs up every file before changing it (`.bak`).
+- `--yes` applies only the provably-dead fixes; MCP servers and real definitions
+  always require a separate, explicit yes.
+- `--dry-run` shows every diff and writes nothing.
 
 ## Install
 
-```bash
-npx slimclaude          # scan (no install)
-npx slimclaude fix      # fix + measure
-
-# or install globally
+```
+npx slimclaude          # run without installing
 npm install -g slimclaude
-slimclaude
 ```
 
-No config files. Works anywhere Node 20+ runs.
+Requires Node 20+.
 
-## Contributing
+## Develop
 
-```bash
+```
 git clone https://github.com/Merlijnos/slimclaude.git
 cd slimclaude
 npm install
@@ -185,12 +173,6 @@ npm run build
 npm test
 ```
 
-CI runs build + tests on Node 20 and 22.
-
 ## License
 
-[MIT](./LICENSE)
-
-## Sponsor
-
-If slimclaude saved you tokens, consider [sponsoring](https://github.com/sponsors/Merlijnos).
+[MIT](./LICENSE). Sponsor: https://github.com/sponsors/Merlijnos

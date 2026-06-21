@@ -73,7 +73,7 @@ export function printScanResult(r: ScanResult, o: ResolvedOptions): void {
         "—",
         hasReview
           ? chalk.dim("review items below")
-          : chalk.green("✓ no fixable waste"),
+          : chalk.green("clean"),
         chalk.dim("0"),
         chalk.dim("$0.00"),
       ]);

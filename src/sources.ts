@@ -50,6 +50,16 @@ export function shortenPath(p: string, home: string): string {
   return p.startsWith(home) ? p.replace(home, "~") : p;
 }
 
+/** Readable path: project-relative inside the scan dir, ~ inside home, else absolute. */
+export function displayPath(p: string, projectPath: string, home: string): string {
+  if (p === projectPath) return ".";
+  if (p.startsWith(projectPath + path.sep)) {
+    return "./" + path.relative(projectPath, p);
+  }
+  if (p.startsWith(home)) return p.replace(home, "~");
+  return p;
+}
+
 export function uniq<T>(items: T[]): T[] {
   return [...new Set(items)];
 }

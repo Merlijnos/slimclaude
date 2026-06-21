@@ -6,7 +6,7 @@ import readline from "node:readline";
 
 import { printBeforeAfter, toJson } from "./report";
 import { scan } from "./scan";
-import { readFileSafe, shortenPath } from "./sources";
+import { displayPath, readFileSafe } from "./sources";
 import { trimMarkdown } from "./trim";
 import { FixAction, ResolvedOptions } from "./types";
 
@@ -102,14 +102,14 @@ function colorizeDiff(patch: string): string {
 }
 
 function printChange(change: Change, o: ResolvedOptions): void {
-  const rel = shortenPath(change.path, o.home);
+  const rel = displayPath(change.path, o.path, o.home);
   if (change.kind === "move") {
     console.log(
       "  " +
         chalk.red("archive ") +
         rel +
         chalk.dim("  →  ") +
-        shortenPath(change.to, o.home)
+        displayPath(change.to, o.path, o.home)
     );
     return;
   }
@@ -128,7 +128,13 @@ function printChange(change: Change, o: ResolvedOptions): void {
   const patch = createTwoFilesPatch(label, label, change.before, change.after, "", "", {
     context: 2,
   });
-  console.log(colorizeDiff(patch));
+  // Drop the noisy "Index:"/"===" header lines and trailing tabs the diff lib adds.
+  const cleaned = patch
+    .split("\n")
+    .filter((l) => !l.startsWith("Index: ") && !/^=+$/.test(l))
+    .map((l) => (l.startsWith("--- ") || l.startsWith("+++ ") ? l.replace(/\s+$/, "") : l))
+    .join("\n");
+  console.log(colorizeDiff(cleaned));
 }
 
 function backup(p: string): void {

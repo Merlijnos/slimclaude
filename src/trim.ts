@@ -49,11 +49,12 @@ export function trimMarkdown(input: string): string {
       continue;
     }
 
-    // Dedupe exact-duplicate substantial prose lines. Skip list items and
-    // structural markers (tables, rules, quotes) where repetition is meaningful.
-    const isList = /^([-*+]\s|\d+\.\s)/.test(trimmed);
+    // Dedupe exact-duplicate substantial lines (prose or list items) — a
+    // repeated line of real length is almost always an accidental paste. Skip
+    // pure structural markers (rules, bare table borders) where repetition is
+    // meaningful, and keep it reversible via the .bak the caller writes.
     const isStructural = /^[-=|>#`]+$/.test(trimmed);
-    if (!isList && !isStructural && trimmed.length >= 20) {
+    if (!isStructural && trimmed.length >= 20) {
       if (seenLines.has(trimmed)) continue;
       seenLines.add(trimmed);
     }

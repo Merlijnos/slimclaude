@@ -74,7 +74,7 @@ function scanAgent(
 
     const trimmed = trimMarkdown(original);
     const saved = origTokens - estimateTokens(trimmed);
-    const label = src.shortenPath(file, o.home);
+    const label = src.displayPath(file, o.path, o.home);
 
     if (saved > 0) {
       findings.push({
@@ -145,7 +145,7 @@ function scanAgent(
       findings.push({
         agent: agent.label,
         category: "MCP",
-        title: `${server} (${src.shortenPath(file, o.home)})`,
+        title: `${server} (${src.displayPath(file, o.path, o.home)})`,
         detail: "usage not confirmed — disable only if you know you don't use it",
         tokensPerSession: MCP_SERVER_TOKEN_EST,
         confidence: "low",
@@ -164,7 +164,7 @@ function scanAgent(
       findings.push({
         agent: agent.label,
         category: "Definitions",
-        title: `${src.shortenPath(dead.path, o.home)} — ${dead.reason}`,
+        title: `${src.displayPath(dead.path, o.path, o.home)} — ${dead.reason}`,
         tokensPerSession: dead.tokens,
         confidence: "high",
         fixable: true,
@@ -180,7 +180,7 @@ function scanAgent(
       findings.push({
         agent: agent.label,
         category: "Definitions",
-        title: src.shortenPath(real.path, o.home),
+        title: src.displayPath(real.path, o.path, o.home),
         detail: "usage not confirmed — remove only if you recognize it as unused",
         tokensPerSession: real.tokens,
         confidence: "low",
