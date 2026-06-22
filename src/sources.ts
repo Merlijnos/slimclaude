@@ -116,44 +116,32 @@ export function walkFiles(dir: string, exts: string[]): string[] {
 // ---------------------------------------------------------------------------
 
 export const HEAVY_DIRS = [
-  "node_modules",
-  "dist",
-  "build",
-  ".next",
-  "out",
-  "coverage",
-  "vendor",
-  ".turbo",
-  ".cache",
+  // JS / web
+  "node_modules", "dist", "build", "out", "coverage", "vendor",
+  ".next", ".nuxt", ".svelte-kit", ".output", ".angular", ".turbo",
+  ".parcel-cache", ".cache",
+  // python
+  ".venv", "venv", "__pycache__", ".pytest_cache", ".mypy_cache", ".ruff_cache",
+  // rust / java / go / ios / infra
+  "target", ".gradle", "Pods", ".terraform",
+  // editor / misc
+  ".idea", "tmp", "logs",
 ];
 
 export const HEAVY_FILES = [
-  "package-lock.json",
-  "yarn.lock",
-  "pnpm-lock.yaml",
-  "composer.lock",
-  "Cargo.lock",
-  "poetry.lock",
+  "package-lock.json", "yarn.lock", "pnpm-lock.yaml", "bun.lockb", "deno.lock",
+  "composer.lock", "Cargo.lock", "poetry.lock", "Pipfile.lock", "Gemfile.lock",
+  "go.sum",
 ];
 
 export const DEFAULT_IGNORE_PATTERNS = [
-  "node_modules/",
-  "dist/",
-  "build/",
-  ".next/",
-  "out/",
-  "coverage/",
-  "vendor/",
-  ".turbo/",
-  ".cache/",
-  "*.lock",
-  "package-lock.json",
-  "yarn.lock",
-  "pnpm-lock.yaml",
-  "*.min.js",
-  "*.min.css",
-  "*.map",
-  ".git/",
+  "node_modules/", "dist/", "build/", "out/", "coverage/", "vendor/",
+  ".next/", ".nuxt/", ".svelte-kit/", ".output/", ".turbo/", ".parcel-cache/", ".cache/",
+  ".venv/", "venv/", "__pycache__/", ".pytest_cache/", ".mypy_cache/", ".ruff_cache/",
+  "target/", ".gradle/", "Pods/", ".terraform/", ".idea/", "tmp/", "logs/",
+  "*.lock", "package-lock.json", "yarn.lock", "pnpm-lock.yaml", "go.sum",
+  "*.min.js", "*.min.css", "*.map", "*.log",
+  ".env", ".env.*", ".DS_Store", ".git/",
 ];
 
 export function parseIgnore(content: string): string[] {
