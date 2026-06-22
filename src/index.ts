@@ -63,8 +63,8 @@ function addCommonOptions(cmd: Command): Command {
 
 const program = new Command();
 program
-  .name("slimclaude")
-  .description("Detect, fix, and measure Claude Code context-token waste.")
+  .name("ctxdiet")
+  .description("Detect, fix, and measure AI agent context-token waste.")
   .version("0.1.0");
 
 addCommonOptions(program);

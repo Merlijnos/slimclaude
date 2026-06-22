@@ -349,5 +349,5 @@ function classifyFile(
 export function archivePathFor(p: string, home: string): string {
   const base = path.join(home, ".claude");
   const rel = p.startsWith(base) ? path.relative(base, p) : path.basename(p);
-  return path.join(home, ".claude", ".slimclaude-archive", rel);
+  return path.join(home, ".claude", ".ctxdiet-archive", rel);
 }

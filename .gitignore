@@ -5,5 +5,5 @@ package-lock.json
 *.bak
 *.bak.*
 *.log
-.slimclaude-archive/
+.ctxdiet-archive/
 .DS_Store

@@ -1,5 +1,5 @@
 // All numbers here are deliberate, documented heuristics — see README "How it
-// estimates tokens". slimclaude never claims exactness.
+// estimates tokens". ctxdiet never claims exactness.
 
 /** The one and only token heuristic: ~4 chars per token. */
 export const CHARS_PER_TOKEN = 4;

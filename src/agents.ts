@@ -5,7 +5,7 @@ import { ResolvedOptions } from "./types";
 
 /**
  * A coding agent and the persistent-context files it loads every session.
- * slimclaude auto-detects which agents a repo (or the home dir) actually uses
+ * ctxdiet auto-detects which agents a repo (or the home dir) actually uses
  * and only scans/tailors output for those.
  */
 export interface AgentDef {

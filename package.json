@@ -1,7 +1,7 @@
 {
-  "name": "slimclaude",
+  "name": "ctxdiet",
   "version": "0.1.0",
-  "description": "Detect, fix, and measure AI coding-agent context-token waste across Claude Code, Codex, Cursor, Gemini, Windsurf & Copilot. Other tools report waste — slimclaude fixes it.",
+  "description": "Detect, fix, and measure AI coding-agent context-token waste across Claude Code, Codex, Cursor, Gemini, Windsurf & Copilot. Other tools report waste — ctxdiet fixes it.",
   "keywords": [
     "claude",
     "claude-code",
@@ -20,18 +20,18 @@
   ],
   "license": "MIT",
   "author": "Merlijn de Groot <merlijndegroot498@gmail.com>",
-  "homepage": "https://github.com/Merlijnos/slimclaude#readme",
+  "homepage": "https://github.com/Merlijnos/ctxdiet#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Merlijnos/slimclaude.git"
+    "url": "git+https://github.com/Merlijnos/ctxdiet.git"
   },
   "bugs": {
-    "url": "https://github.com/Merlijnos/slimclaude/issues"
+    "url": "https://github.com/Merlijnos/ctxdiet/issues"
   },
   "funding": "https://github.com/sponsors/Merlijnos",
   "type": "commonjs",
   "bin": {
-    "slimclaude": "dist/src/index.js"
+    "ctxdiet": "dist/src/index.js"
   },
   "files": [
     "dist/src",

@@ -30,7 +30,7 @@ export function printScanResult(r: ScanResult, o: ResolvedOptions): void {
 
   console.log();
   console.log(
-    chalk.bold("slimclaude") +
+    chalk.bold("ctxdiet") +
       chalk.dim(`  ·  ${shortenPath(o.path, o.home)}  ·  grade `) +
       gradeBadge(r.grade)
   );
@@ -116,7 +116,7 @@ export function printScanResult(r: ScanResult, o: ResolvedOptions): void {
   if (low.length > 0) {
     console.log();
     console.log(
-      chalk.yellow.bold("Review — slimclaude won't change these on its own")
+      chalk.yellow.bold("Review — ctxdiet won't change these on its own")
     );
     console.log(
       chalk.dim(
@@ -152,7 +152,7 @@ export function printScanResult(r: ScanResult, o: ResolvedOptions): void {
   console.log(
     chalk.dim(
       `Estimate: chars/4 at ${o.model} pricing${modelNote}, ${o.sessionsPerMonth} sessions/month. ` +
-        `Run \`npx slimclaude fix\` to apply.`
+        `Run \`npx ctxdiet fix\` to apply.`
     )
   );
   console.log();
