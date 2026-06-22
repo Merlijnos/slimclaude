@@ -1,4 +1,4 @@
-# ctxdiet
+# !! slimclaude moved to github.com/Merlijnos/ctxdiet !!
 
 [![npm version](https://img.shields.io/npm/v/ctxdiet.svg)](https://www.npmjs.com/package/ctxdiet)
 [![CI](https://github.com/Merlijnos/ctxdiet/actions/workflows/ci.yml/badge.svg)](https://github.com/Merlijnos/ctxdiet/actions/workflows/ci.yml)
