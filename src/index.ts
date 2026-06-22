@@ -6,6 +6,7 @@ import path from "node:path";
 import { runFix } from "./fix";
 import { printScanResult } from "./report";
 import { scan } from "./scan";
+import { detectModel } from "./sources";
 import { Model, ResolvedOptions } from "./types";
 
 interface RawOptions {
@@ -17,20 +18,33 @@ interface RawOptions {
   yes?: boolean;
 }
 
-function resolveOptions(raw: RawOptions): ResolvedOptions {
-  const model = (raw.model ?? "sonnet").toLowerCase();
-  if (model !== "opus" && model !== "sonnet" && model !== "haiku") {
-    console.error(`Invalid --model "${raw.model}". Use opus, sonnet, or haiku.`);
-    process.exit(1);
+function resolveOptions(raw: RawOptions, modelFromCli: boolean): ResolvedOptions {
+  const home = os.homedir();
+
+  let model: Model;
+  let modelDetected = false;
+  if (modelFromCli) {
+    const m = (raw.model ?? "sonnet").toLowerCase();
+    if (m !== "opus" && m !== "sonnet" && m !== "haiku") {
+      console.error(`Invalid --model "${raw.model}". Use opus, sonnet, or haiku.`);
+      process.exit(1);
+    }
+    model = m;
+  } else {
+    const detected = detectModel(home);
+    model = detected ?? "sonnet";
+    modelDetected = detected !== null;
   }
+
   const parsed = Number.parseInt(raw.sessionsPerMonth ?? "100", 10);
   const sessionsPerMonth = Number.isFinite(parsed) && parsed > 0 ? parsed : 100;
 
   return {
     path: path.resolve(raw.path ?? process.cwd()),
-    home: os.homedir(),
+    home,
     sessionsPerMonth,
-    model: model as Model,
+    model,
+    modelDetected,
     json: Boolean(raw.json),
     dryRun: Boolean(raw.dryRun),
     yes: Boolean(raw.yes),
@@ -55,7 +69,8 @@ program
 
 addCommonOptions(program);
 program.action(() => {
-  const o = resolveOptions(program.opts<RawOptions>());
+  const fromCli = program.getOptionValueSource("model") === "cli";
+  const o = resolveOptions(program.opts<RawOptions>(), fromCli);
   printScanResult(scan(o), o);
 });
 
@@ -66,7 +81,10 @@ const fix = program
   );
 addCommonOptions(fix);
 fix.action(async () => {
-  await runFix(resolveOptions(fix.optsWithGlobals<RawOptions>()));
+  const fromCli =
+    fix.getOptionValueSource("model") === "cli" ||
+    program.getOptionValueSource("model") === "cli";
+  await runFix(resolveOptions(fix.optsWithGlobals<RawOptions>(), fromCli));
 });
 
 program.parseAsync(process.argv).catch((err) => {

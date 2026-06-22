@@ -12,6 +12,8 @@ export interface ResolvedOptions {
   home: string;
   sessionsPerMonth: number;
   model: Model;
+  /** True when the model was auto-detected from Claude config, not passed in. */
+  modelDetected: boolean;
   json: boolean;
   dryRun: boolean;
   yes: boolean;

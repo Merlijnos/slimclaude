@@ -116,11 +116,11 @@ export function printScanResult(r: ScanResult, o: ResolvedOptions): void {
   if (low.length > 0) {
     console.log();
     console.log(
-      chalk.yellow.bold("Potential savings — needs your review (not counted above)")
+      chalk.yellow.bold("Review — slimclaude won't change these on its own")
     );
     console.log(
       chalk.dim(
-        "slimclaude cannot see invocation history, so it cannot confirm these are unused."
+        "They cost tokens every session; only you know if they're still in use."
       )
     );
     const reviewTable = new Table({
@@ -141,17 +141,18 @@ export function printScanResult(r: ScanResult, o: ResolvedOptions): void {
     console.log(reviewTable.toString());
     console.log(
       chalk.yellow(
-        `Unconfirmed potential: ~${fmt(r.lowConfidencePotential)} tokens/session ` +
-          `(~${dollars(r.lowConfidencePotential, o)}/month) — your judgment, not detected.`
+        `Optional: ~${fmt(r.lowConfidencePotential)} tokens/session ` +
+          `(~${dollars(r.lowConfidencePotential, o)}/month) if you disable what you don't need.`
       )
     );
   }
 
+  const modelNote = o.modelDetected ? " (from your Claude config)" : "";
   console.log();
   console.log(
     chalk.dim(
-      `Estimates use a chars/4 heuristic at ${o.model} pricing, ${o.sessionsPerMonth} sessions/month. ` +
-        `Run \`slimclaude fix\` to apply fixes. See README for method.`
+      `Estimate: chars/4 at ${o.model} pricing${modelNote}, ${o.sessionsPerMonth} sessions/month. ` +
+        `Run \`npx slimclaude fix\` to apply.`
     )
   );
   console.log();

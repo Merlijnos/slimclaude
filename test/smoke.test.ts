@@ -18,6 +18,7 @@ function options(over: Partial<ResolvedOptions>): ResolvedOptions {
     home: tmpdir("slim-home-"),
     sessionsPerMonth: 100,
     model: "sonnet",
+    modelDetected: false,
     json: true,
     dryRun: false,
     yes: false,

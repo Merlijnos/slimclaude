@@ -7,7 +7,7 @@ import {
   HEAVY_WALK_MAX_FILES,
 } from "./constants";
 import { estimateTokens, estimateTokensFromBytes } from "./tokens";
-import { ResolvedOptions } from "./types";
+import { Model, ResolvedOptions } from "./types";
 
 // ---------------------------------------------------------------------------
 // fs helpers
@@ -62,6 +62,28 @@ export function displayPath(p: string, projectPath: string, home: string): strin
 
 export function uniq<T>(items: T[]): T[] {
   return [...new Set(items)];
+}
+
+/** Best-effort read of the user's configured Claude model, for the cost estimate. */
+export function detectModel(home: string): Model | null {
+  for (const file of [
+    path.join(home, ".claude", "settings.json"),
+    path.join(home, ".claude.json"),
+  ]) {
+    if (!isFile(file)) continue;
+    let json: unknown;
+    try {
+      json = JSON.parse(readFileSafe(file));
+    } catch {
+      continue;
+    }
+    const raw = (json as Record<string, unknown>)?.model;
+    const value = typeof raw === "string" ? raw.toLowerCase() : "";
+    if (value.includes("opus")) return "opus";
+    if (value.includes("haiku")) return "haiku";
+    if (value.includes("sonnet")) return "sonnet";
+  }
+  return null;
 }
 
 /** Recursively list files under `dir` whose name ends with one of `exts`. */
