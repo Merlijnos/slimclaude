@@ -52,7 +52,7 @@ function buildChange(action: FixAction): Change | null {
     case "ignore-augment": {
       const before = readFileSafe(action.path);
       const body = before.replace(/\n*$/, "\n");
-      const after = body + "\n# added by slimclaude\n" + action.added.join("\n") + "\n";
+      const after = body + "\n# added by ctxdiet\n" + action.added.join("\n") + "\n";
       return { kind: "write", path: action.path, before, after, isNew: false };
     }
     case "mcp-disable": {
@@ -77,10 +77,10 @@ function disableMcpServer(content: string, server: string): string | null {
   const servers = json.mcpServers as Record<string, unknown> | undefined;
   if (!servers || !(server in servers)) return null;
   const disabled =
-    (json.mcpServers_disabledBySlimclaude as Record<string, unknown>) ?? {};
+    (json.mcpServers_disabledByCtxdiet as Record<string, unknown>) ?? {};
   disabled[server] = servers[server];
   delete servers[server];
-  json.mcpServers_disabledBySlimclaude = disabled;
+  json.mcpServers_disabledByCtxdiet = disabled;
   return JSON.stringify(json, null, 2) + "\n";
 }
 
@@ -119,7 +119,7 @@ function printChange(change: Change, o: ResolvedOptions): void {
       "    " +
         chalk.red(`- mcpServers.${change.server}`) +
         chalk.dim("  (kept under ") +
-        chalk.green(`mcpServers_disabledBySlimclaude.${change.server}`) +
+        chalk.green(`mcpServers_disabledByCtxdiet.${change.server}`) +
         chalk.dim(", reversible — JSON is reserialized, .bak saved)")
     );
     return;
@@ -227,7 +227,7 @@ export async function runFix(o: ResolvedOptions): Promise<void> {
         console.log(
           chalk.yellow(
             `\nSkipped ${low.length} usage-unconfirmed item(s) (MCP servers / definitions). ` +
-              `--yes never touches these — re-run \`slimclaude fix\` without --yes to review them.`
+              `--yes never touches these — re-run \`ctxdiet fix\` without --yes to review them.`
           )
         );
       }
@@ -237,7 +237,7 @@ export async function runFix(o: ResolvedOptions): Promise<void> {
       console.log(chalk.yellow.bold("\nReview items — usage not confirmed\n"));
       console.log(
         chalk.dim(
-          "slimclaude can't see your history. Only disable what you know you don't use.\n"
+          "ctxdiet can't see your history. Only disable what you know you don't use.\n"
         )
       );
       for (const f of low) {

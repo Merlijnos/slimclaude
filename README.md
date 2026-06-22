@@ -1,15 +1,15 @@
-# slimclaude
+# ctxdiet
 
-[![npm version](https://img.shields.io/npm/v/slimclaude.svg)](https://www.npmjs.com/package/slimclaude)
-[![CI](https://github.com/Merlijnos/slimclaude/actions/workflows/ci.yml/badge.svg)](https://github.com/Merlijnos/slimclaude/actions/workflows/ci.yml)
+[![npm version](https://img.shields.io/npm/v/ctxdiet.svg)](https://www.npmjs.com/package/ctxdiet)
+[![CI](https://github.com/Merlijnos/ctxdiet/actions/workflows/ci.yml/badge.svg)](https://github.com/Merlijnos/ctxdiet/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](./LICENSE)
 
-Your AI coding agents reload the same context every session. slimclaude finds the
+Your AI coding agents reload the same context every session. ctxdiet finds the
 waste, fixes it with diffs you approve, and shows what you saved. Local, no account.
 
 ```
-npx slimclaude        # scan, read-only
-npx slimclaude fix    # show diffs, confirm, apply, measure
+npx ctxdiet        # scan, read-only
+npx ctxdiet fix    # show diffs, confirm, apply, measure
 ```
 
 ## What one fix looks like
